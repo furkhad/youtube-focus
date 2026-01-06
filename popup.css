@@ -1,0 +1,187 @@
+/**
+ * Cyberpunk / Arch Linux Aesthetic
+ * Void Black background with Neon Green accents
+ * Terminal-style monospace font
+ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 380px;
+  background: #0f0f12;
+  color: #ffffff;
+  font-family: 'Courier New', 'Monaco', 'Menlo', 'Consolas', monospace;
+  padding: 20px;
+  margin: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  color: #00ff9d;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+  letter-spacing: 1px;
+}
+
+.label {
+  color: #ffffff;
+  font-size: 13px;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  background: #1a1a1f;
+  border: 2px solid #2a2a2f;
+  border-radius: 4px;
+  color: #00ff9d;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 90px;
+  transition: all 0.3s ease;
+}
+
+.input::placeholder {
+  color: #4a4a4f;
+  opacity: 0.7;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #00ff9d;
+  box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+  background: #1f1f24;
+}
+
+.button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #00ff9d 0%, #00cc7a 100%);
+  color: #0f0f12;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(0, 255, 157, 0.4);
+}
+
+.button:hover {
+  background: linear-gradient(135deg, #00ffb3 0%, #00ff9d 100%);
+  box-shadow: 0 0 25px rgba(0, 255, 157, 0.6);
+  transform: translateY(-1px);
+}
+
+.button:active {
+  transform: translateY(0);
+  box-shadow: 0 0 15px rgba(0, 255, 157, 0.4);
+}
+
+.status {
+  margin: 0;
+  color: #00ff9d;
+  font-size: 12px;
+  display: none;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(0, 255, 157, 0.5);
+  padding: 8px;
+  background: rgba(0, 255, 157, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 255, 157, 0.3);
+}
+
+.status.error {
+  color: #ff4444;
+  text-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+  background: rgba(255, 68, 68, 0.1);
+  border-color: rgba(255, 68, 68, 0.3);
+}
+
+.system-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(0, 255, 157, 0.05);
+  border: 1px solid rgba(0, 255, 157, 0.2);
+  border-radius: 4px;
+  font-size: 12px;
+  color: #00ff9d;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #00ff9d;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 255, 157, 0.8);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.8);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(0, 255, 157, 1);
+  }
+}
+
+.indicator-text {
+  color: #00ff9d;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 5px rgba(0, 255, 157, 0.5);
+}
+
+.info {
+  color: #888888;
+  font-size: 11px;
+  font-style: italic;
+  margin: 0;
+  opacity: 0.7;
+  line-height: 1.4;
+}
+
+/* Scrollbar styling for cyberpunk aesthetic */
+.input::-webkit-scrollbar {
+  width: 8px;
+}
+
+.input::-webkit-scrollbar-track {
+  background: #1a1a1f;
+  border-radius: 4px;
+}
+
+.input::-webkit-scrollbar-thumb {
+  background: #00ff9d;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0, 255, 157, 0.5);
+}
+
+.input::-webkit-scrollbar-thumb:hover {
+  background: #00ffb3;
+  box-shadow: 0 0 8px rgba(0, 255, 157, 0.7);
+}
