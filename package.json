@@ -1,0 +1,25 @@
+{
+  "name": "my-yt-extension",
+  "version": "1.0.0",
+  "description": "A browser extension to help stay focused on YouTube.",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/furkhad/youtube-focus.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/furkhad/youtube-focus/issues"
+  },
+  "homepage": "https://github.com/furkhad/youtube-focus#readme",
+  "dependencies": {
+    "@xenova/transformers": "^2.17.2",
+    "esbuild": "^0.27.2"
+  }
+}

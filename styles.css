@@ -1,0 +1,118 @@
+/* --- Anti-Shorts (Keep this strict) --- */
+ytd-reel-shelf-renderer,
+ytd-rich-shelf-renderer[is-shorts],
+a[href^="/shorts"],
+ytd-guide-entry-renderer a[href^="/shorts"],
+ytd-guide-entry-renderer[title="Shorts"] {
+  display: none !important;
+}
+
+/* --- Feed Replacement Grid --- */
+.focus-feed-hidden {
+  display: none !important;
+}
+
+.focus-replacement-grid {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  box-sizing: border-box;
+  background: transparent; /* let YouTube theme show through */
+  color: var(--yt-spec-text-primary);
+  min-height: 1px;
+}
+
+.focus-replacement-inner {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 700px) {
+  .focus-replacement-inner { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1000px) {
+  .focus-replacement-inner { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1400px) {
+  .focus-replacement-inner { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* --- Video Card Styling (native-like) --- */
+.focus-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  background: transparent;
+  border-radius: 8px;
+  transition: transform 0.12s linear, background 0.12s linear;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.focus-card:hover {
+  background: var(--yt-spec-badge-chip-background, rgba(255,255,255,0.03));
+  transform: translateY(-2px);
+}
+
+.focus-thumb-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--yt-spec-call-to-action, #111);
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.focus-thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.focus-meta-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding-top: 12px;
+}
+
+.focus-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(0,0,0,0.15);
+  flex: 0 0 36px;
+}
+
+.focus-meta { flex: 1 1 auto; display: flex; flex-direction: column; gap: 6px; }
+
+.focus-title {
+  font-family: Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--yt-spec-text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.focus-channel {
+  font-family: Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
+  color: var(--yt-spec-text-secondary);
+}
+
+/* Ensure replacement doesn't hide scrollbars or block overflow */
+.focus-replacement-grid,
+.focus-replacement-inner,
+.focus-card { overflow: visible; }
+
+/* Small utilities */
+.focus-card img { display: block; }
+
+/* Accessibility / reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .focus-card { transition: none; transform: none; }
+}

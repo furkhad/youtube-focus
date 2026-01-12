@@ -1,0 +1,85 @@
+import { pipeline, env } from '@xenova/transformers';
+
+// Configure transformers env for extension/service worker environment
+try {
+    // Avoid local FS model usage inside the extension
+    env.allowLocalModels = false;
+
+    // Ensure the onnx backend settings exist and are safe for extensions
+    env.backends = env.backends || {};
+    env.backends.onnx = env.backends.onnx || {};
+    env.backends.onnx.wasm = env.backends.onnx.wasm || {};
+
+    // CRITICAL: Disable multithreading and proxying to avoid Blob/worker usage
+    env.backends.onnx.wasm.numThreads = 1;
+    env.backends.onnx.wasm.proxy = false;
+
+    // Point wasm paths to extension root so wasm files are loaded locally
+    // e.g. chrome-extension://<id>/
+    env.backends.onnx.wasm.wasmPaths = chrome.runtime.getURL('/');
+
+    console.log('[Background AI] env configured', env.backends.onnx.wasm);
+} catch (err) {
+    console.warn('[Background AI] Failed to configure env:', err);
+}
+
+let classifier = null;
+let loading = true;
+let loadError = null;
+
+async function initClassifier() {
+    try {
+        console.log('[Background AI] Initializing classifier...');
+        // Initialize zero-shot pipeline with mobileBERT MNLI
+        classifier = await pipeline('zero-shot-classification', 'Xenova/mobilebert-uncased-mnli');
+        loading = false;
+        console.log('[Background AI] Model loaded and ready');
+    } catch (err) {
+        loadError = err;
+        loading = false;
+        console.error('[Background AI] Failed to load model', err);
+    }
+}
+
+// Start loading the model (async)
+initClassifier();
+
+// Handle classify messages from content scripts
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (!message || message.type !== 'classify') return;
+
+    const { title, goal } = message;
+
+    // If still loading, return a short response so content show a fail-safe
+    if (loading) {
+        sendResponse({ loading: true });
+        return true; // keep channel open (async)
+    }
+
+    // If load failed, allow content script to show the video (fail-safe)
+    if (loadError || !classifier) {
+        sendResponse({ loading: false, error: String(loadError), shouldShow: true });
+        return true;
+    }
+
+    (async () => {
+        try {
+            const candidate_labels = [goal, 'Distraction'];
+            const result = await classifier(title, { candidate_labels });
+
+            const posIndex = result.labels.indexOf(goal);
+            const negIndex = result.labels.indexOf('Distraction');
+            const posScore = posIndex >= 0 ? result.scores[posIndex] : 0;
+            const negScore = negIndex >= 0 ? result.scores[negIndex] : 0;
+            const shouldShow = posScore >= negScore;
+
+            sendResponse({ loading: false, shouldShow, scores: { posScore, negScore }, labels: result.labels });
+        } catch (err) {
+            console.error('[Background AI] Classification error', err);
+            // On error, prefer showing the video (fail-safe)
+            sendResponse({ loading: false, shouldShow: true, error: String(err) });
+        }
+    })();
+
+    return true; // keep channel open for async response
+});
