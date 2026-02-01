@@ -4,7 +4,6 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
@@ -27,7 +26,6 @@ var __toESM = (mod2, isNodeMode, target) => (target = mod2 != null ? __create(__
   isNodeMode || !mod2 || !mod2.__esModule ? __defProp(target, "default", { value: mod2, enumerable: true }) : target,
   mod2
 ));
-var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // node_modules/@xenova/transformers/src/utils/core.js
 function dispatchCallback(progress_callback, data) {
@@ -13786,24 +13784,24 @@ var init_hub = __esm({
     init_core();
     FileResponse = class _FileResponse {
       /**
+       * Mapping from file extensions to MIME types.
+       */
+      _CONTENT_TYPE_MAP = {
+        "txt": "text/plain",
+        "html": "text/html",
+        "css": "text/css",
+        "js": "text/javascript",
+        "json": "application/json",
+        "png": "image/png",
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "gif": "image/gif"
+      };
+      /**
        * Creates a new `FileResponse` object.
        * @param {string|URL} filePath
        */
       constructor(filePath) {
-        /**
-         * Mapping from file extensions to MIME types.
-         */
-        __publicField(this, "_CONTENT_TYPE_MAP", {
-          "txt": "text/plain",
-          "html": "text/html",
-          "css": "text/css",
-          "js": "text/javascript",
-          "json": "application/json",
-          "png": "image/png",
-          "jpg": "image/jpeg",
-          "jpeg": "image/jpeg",
-          "gif": "image/gif"
-        });
         this.filePath = filePath;
         this.headers = new Headers();
         this.exists = import_fs2.default.existsSync(filePath);
@@ -14951,19 +14949,19 @@ var init_tensor = __esm({
     });
     ONNXTensor = ONNX.Tensor;
     Tensor = class _Tensor {
+      /** @type {number[]} Dimensions of the tensor. */
+      dims;
+      /** @type {DataType} Type of the tensor. */
+      type;
+      /** @type {DataArray} The data stored in the tensor. */
+      data;
+      /** @type {number} The number of elements in the tensor. */
+      size;
       /**
        * Create a new Tensor or copy an existing Tensor.
        * @param {[DataType, DataArray, number[]]|[import('onnxruntime-common').Tensor]} args
        */
       constructor(...args) {
-        /** @type {number[]} Dimensions of the tensor. */
-        __publicField(this, "dims");
-        /** @type {DataType} Type of the tensor. */
-        __publicField(this, "type");
-        /** @type {DataArray} The data stored in the tensor. */
-        __publicField(this, "data");
-        /** @type {number} The number of elements in the tensor. */
-        __publicField(this, "size");
         if (args[0] instanceof ONNXTensor) {
           Object.assign(this, args[0]);
         } else {
@@ -16287,11 +16285,11 @@ function range(start, stop, step = 1) {
 function slice(array, start, stop, step = 1) {
   const direction = Math.sign(step);
   if (direction >= 0) {
-    start = (start ?? (start = 0)) < 0 ? Math.max(array.length + start, 0) : Math.min(start, array.length);
-    stop = (stop ?? (stop = array.length)) < 0 ? Math.max(array.length + stop, 0) : Math.min(stop, array.length);
+    start = (start ??= 0) < 0 ? Math.max(array.length + start, 0) : Math.min(start, array.length);
+    stop = (stop ??= array.length) < 0 ? Math.max(array.length + stop, 0) : Math.min(stop, array.length);
   } else {
-    start = (start ?? (start = array.length - 1)) < 0 ? Math.max(array.length + start, -1) : Math.min(start, array.length - 1);
-    stop = (stop ?? (stop = -1)) < -1 ? Math.max(array.length + stop, -1) : Math.min(stop, array.length - 1);
+    start = (start ??= array.length - 1) < 0 ? Math.max(array.length + start, -1) : Math.min(start, array.length - 1);
+    stop = (stop ??= -1) < -1 ? Math.max(array.length + stop, -1) : Math.min(stop, array.length - 1);
   }
   const result = [];
   for (let i = start; direction * i < direction * stop; i += step) {
@@ -16481,65 +16479,60 @@ var init_dist = __esm({
       // Backslash
     ]);
     Statement = class {
-      constructor() {
-        __publicField(this, "type", "Statement");
-      }
+      type = "Statement";
     };
     Program = class extends Statement {
       constructor(body) {
         super();
-        __publicField(this, "type", "Program");
         this.body = body;
       }
+      type = "Program";
     };
     If = class extends Statement {
       constructor(test, body, alternate) {
         super();
-        __publicField(this, "type", "If");
         this.test = test;
         this.body = body;
         this.alternate = alternate;
       }
+      type = "If";
     };
     For = class extends Statement {
       constructor(loopvar, iterable, body) {
         super();
-        __publicField(this, "type", "For");
         this.loopvar = loopvar;
         this.iterable = iterable;
         this.body = body;
       }
+      type = "For";
     };
     SetStatement = class extends Statement {
       constructor(assignee, value) {
         super();
-        __publicField(this, "type", "Set");
         this.assignee = assignee;
         this.value = value;
       }
+      type = "Set";
     };
     Expression = class extends Statement {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "Expression");
-      }
+      type = "Expression";
     };
     MemberExpression = class extends Expression {
       constructor(object, property, computed) {
         super();
-        __publicField(this, "type", "MemberExpression");
         this.object = object;
         this.property = property;
         this.computed = computed;
       }
+      type = "MemberExpression";
     };
     CallExpression = class extends Expression {
       constructor(callee, args) {
         super();
-        __publicField(this, "type", "CallExpression");
         this.callee = callee;
         this.args = args;
       }
+      type = "CallExpression";
     };
     Identifier = class extends Expression {
       /**
@@ -16547,115 +16540,97 @@ var init_dist = __esm({
        */
       constructor(value) {
         super();
-        __publicField(this, "type", "Identifier");
         this.value = value;
       }
+      type = "Identifier";
     };
     Literal = class extends Expression {
       constructor(value) {
         super();
-        __publicField(this, "type", "Literal");
         this.value = value;
       }
+      type = "Literal";
     };
     NumericLiteral = class extends Literal {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "NumericLiteral");
-      }
+      type = "NumericLiteral";
     };
     StringLiteral = class extends Literal {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "StringLiteral");
-      }
+      type = "StringLiteral";
     };
     BooleanLiteral = class extends Literal {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "BooleanLiteral");
-      }
+      type = "BooleanLiteral";
     };
     ArrayLiteral = class extends Literal {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "ArrayLiteral");
-      }
+      type = "ArrayLiteral";
     };
     TupleLiteral = class extends Literal {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "TupleLiteral");
-      }
+      type = "TupleLiteral";
     };
     ObjectLiteral = class extends Literal {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "ObjectLiteral");
-      }
+      type = "ObjectLiteral";
     };
     BinaryExpression = class extends Expression {
       constructor(operator, left, right) {
         super();
-        __publicField(this, "type", "BinaryExpression");
         this.operator = operator;
         this.left = left;
         this.right = right;
       }
+      type = "BinaryExpression";
     };
     FilterExpression = class extends Expression {
       constructor(operand, filter) {
         super();
-        __publicField(this, "type", "FilterExpression");
         this.operand = operand;
         this.filter = filter;
       }
+      type = "FilterExpression";
     };
     TestExpression = class extends Expression {
       constructor(operand, negate, test) {
         super();
-        __publicField(this, "type", "TestExpression");
         this.operand = operand;
         this.negate = negate;
         this.test = test;
       }
+      type = "TestExpression";
     };
     UnaryExpression = class extends Expression {
       constructor(operator, argument) {
         super();
-        __publicField(this, "type", "UnaryExpression");
         this.operator = operator;
         this.argument = argument;
       }
+      type = "UnaryExpression";
     };
     SliceExpression = class extends Expression {
       constructor(start = void 0, stop = void 0, step = void 0) {
         super();
-        __publicField(this, "type", "SliceExpression");
         this.start = start;
         this.stop = stop;
         this.step = step;
       }
+      type = "SliceExpression";
     };
     KeywordArgumentExpression = class extends Expression {
       constructor(key, value) {
         super();
-        __publicField(this, "type", "KeywordArgumentExpression");
         this.key = key;
         this.value = value;
       }
+      type = "KeywordArgumentExpression";
     };
     RuntimeValue = class {
+      type = "RuntimeValue";
+      value;
+      /**
+       * A collection of built-in functions for this type.
+       */
+      builtins = /* @__PURE__ */ new Map();
       /**
        * Creates a new RuntimeValue.
        */
       constructor(value = void 0) {
-        __publicField(this, "type", "RuntimeValue");
-        __publicField(this, "value");
-        /**
-         * A collection of built-in functions for this type.
-         */
-        __publicField(this, "builtins", /* @__PURE__ */ new Map());
         this.value = value;
       }
       /**
@@ -16668,74 +16643,43 @@ var init_dist = __esm({
       }
     };
     NumericValue = class extends RuntimeValue {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "NumericValue");
-      }
+      type = "NumericValue";
     };
     StringValue = class extends RuntimeValue {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "StringValue");
-        __publicField(this, "builtins", /* @__PURE__ */ new Map([
-          [
-            "upper",
-            new FunctionValue(() => {
-              return new StringValue(this.value.toUpperCase());
-            })
-          ],
-          [
-            "lower",
-            new FunctionValue(() => {
-              return new StringValue(this.value.toLowerCase());
-            })
-          ],
-          [
-            "strip",
-            new FunctionValue(() => {
-              return new StringValue(this.value.trim());
-            })
-          ],
-          [
-            "title",
-            new FunctionValue(() => {
-              return new StringValue(titleCase(this.value));
-            })
-          ],
-          ["length", new NumericValue(this.value.length)]
-        ]));
-      }
+      type = "StringValue";
+      builtins = /* @__PURE__ */ new Map([
+        [
+          "upper",
+          new FunctionValue(() => {
+            return new StringValue(this.value.toUpperCase());
+          })
+        ],
+        [
+          "lower",
+          new FunctionValue(() => {
+            return new StringValue(this.value.toLowerCase());
+          })
+        ],
+        [
+          "strip",
+          new FunctionValue(() => {
+            return new StringValue(this.value.trim());
+          })
+        ],
+        [
+          "title",
+          new FunctionValue(() => {
+            return new StringValue(titleCase(this.value));
+          })
+        ],
+        ["length", new NumericValue(this.value.length)]
+      ]);
     };
     BooleanValue = class extends RuntimeValue {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "BooleanValue");
-      }
+      type = "BooleanValue";
     };
     ObjectValue = class extends RuntimeValue {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "ObjectValue");
-        __publicField(this, "builtins", /* @__PURE__ */ new Map([
-          [
-            "get",
-            new FunctionValue(([key, defaultValue]) => {
-              if (!(key instanceof StringValue)) {
-                throw new Error(`Object key must be a string: got ${key.type}`);
-              }
-              return this.value.get(key.value) ?? defaultValue ?? new NullValue();
-            })
-          ],
-          [
-            "items",
-            new FunctionValue(() => {
-              return new ArrayValue(
-                Array.from(this.value.entries()).map(([key, value]) => new ArrayValue([new StringValue(key), value]))
-              );
-            })
-          ]
-        ]));
-      }
+      type = "ObjectValue";
       /**
        * NOTE: necessary to override since all JavaScript arrays are considered truthy,
        * while only non-empty Python arrays are consider truthy.
@@ -16747,13 +16691,29 @@ var init_dist = __esm({
       __bool__() {
         return new BooleanValue(this.value.size > 0);
       }
+      builtins = /* @__PURE__ */ new Map([
+        [
+          "get",
+          new FunctionValue(([key, defaultValue]) => {
+            if (!(key instanceof StringValue)) {
+              throw new Error(`Object key must be a string: got ${key.type}`);
+            }
+            return this.value.get(key.value) ?? defaultValue ?? new NullValue();
+          })
+        ],
+        [
+          "items",
+          new FunctionValue(() => {
+            return new ArrayValue(
+              Array.from(this.value.entries()).map(([key, value]) => new ArrayValue([new StringValue(key), value]))
+            );
+          })
+        ]
+      ]);
     };
     ArrayValue = class extends RuntimeValue {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "ArrayValue");
-        __publicField(this, "builtins", /* @__PURE__ */ new Map([["length", new NumericValue(this.value.length)]]));
-      }
+      type = "ArrayValue";
+      builtins = /* @__PURE__ */ new Map([["length", new NumericValue(this.value.length)]]);
       /**
        * NOTE: necessary to override since all JavaScript arrays are considered truthy,
        * while only non-empty Python arrays are consider truthy.
@@ -16767,98 +16727,86 @@ var init_dist = __esm({
       }
     };
     TupleValue = class extends ArrayValue {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "TupleValue");
-      }
+      type = "TupleValue";
     };
     FunctionValue = class extends RuntimeValue {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "FunctionValue");
-      }
+      type = "FunctionValue";
     };
     NullValue = class extends RuntimeValue {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "NullValue");
-      }
+      type = "NullValue";
     };
     UndefinedValue = class extends RuntimeValue {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "type", "UndefinedValue");
-      }
+      type = "UndefinedValue";
     };
     Environment = class {
       constructor(parent) {
-        /**
-         * The variables declared in this environment.
-         */
-        __publicField(this, "variables", /* @__PURE__ */ new Map([
-          [
-            "namespace",
-            new FunctionValue((args) => {
-              if (args.length === 0) {
-                return new ObjectValue(/* @__PURE__ */ new Map());
-              }
-              if (args.length !== 1 || !(args[0] instanceof ObjectValue)) {
-                throw new Error("`namespace` expects either zero arguments or a single object argument");
-              }
-              return args[0];
-            })
-          ]
-        ]));
-        /**
-         * The tests available in this environment.
-         */
-        __publicField(this, "tests", /* @__PURE__ */ new Map([
-          ["boolean", (operand) => operand.type === "BooleanValue"],
-          ["callable", (operand) => operand instanceof FunctionValue],
-          [
-            "odd",
-            (operand) => {
-              if (operand.type !== "NumericValue") {
-                throw new Error(`Cannot apply test "odd" to type: ${operand.type}`);
-              }
-              return operand.value % 2 !== 0;
-            }
-          ],
-          [
-            "even",
-            (operand) => {
-              if (operand.type !== "NumericValue") {
-                throw new Error(`Cannot apply test "even" to type: ${operand.type}`);
-              }
-              return operand.value % 2 === 0;
-            }
-          ],
-          ["false", (operand) => operand.type === "BooleanValue" && !operand.value],
-          ["true", (operand) => operand.type === "BooleanValue" && operand.value],
-          ["number", (operand) => operand.type === "NumericValue"],
-          ["integer", (operand) => operand.type === "NumericValue" && Number.isInteger(operand.value)],
-          ["iterable", (operand) => operand instanceof ArrayValue || operand instanceof StringValue],
-          [
-            "lower",
-            (operand) => {
-              const str = operand.value;
-              return operand.type === "StringValue" && str === str.toLowerCase();
-            }
-          ],
-          [
-            "upper",
-            (operand) => {
-              const str = operand.value;
-              return operand.type === "StringValue" && str === str.toUpperCase();
-            }
-          ],
-          ["none", (operand) => operand.type === "NullValue"],
-          ["defined", (operand) => operand.type !== "UndefinedValue"],
-          ["undefined", (operand) => operand.type === "UndefinedValue"],
-          ["equalto", (a, b) => a.value === b.value]
-        ]));
         this.parent = parent;
       }
+      /**
+       * The variables declared in this environment.
+       */
+      variables = /* @__PURE__ */ new Map([
+        [
+          "namespace",
+          new FunctionValue((args) => {
+            if (args.length === 0) {
+              return new ObjectValue(/* @__PURE__ */ new Map());
+            }
+            if (args.length !== 1 || !(args[0] instanceof ObjectValue)) {
+              throw new Error("`namespace` expects either zero arguments or a single object argument");
+            }
+            return args[0];
+          })
+        ]
+      ]);
+      /**
+       * The tests available in this environment.
+       */
+      tests = /* @__PURE__ */ new Map([
+        ["boolean", (operand) => operand.type === "BooleanValue"],
+        ["callable", (operand) => operand instanceof FunctionValue],
+        [
+          "odd",
+          (operand) => {
+            if (operand.type !== "NumericValue") {
+              throw new Error(`Cannot apply test "odd" to type: ${operand.type}`);
+            }
+            return operand.value % 2 !== 0;
+          }
+        ],
+        [
+          "even",
+          (operand) => {
+            if (operand.type !== "NumericValue") {
+              throw new Error(`Cannot apply test "even" to type: ${operand.type}`);
+            }
+            return operand.value % 2 === 0;
+          }
+        ],
+        ["false", (operand) => operand.type === "BooleanValue" && !operand.value],
+        ["true", (operand) => operand.type === "BooleanValue" && operand.value],
+        ["number", (operand) => operand.type === "NumericValue"],
+        ["integer", (operand) => operand.type === "NumericValue" && Number.isInteger(operand.value)],
+        ["iterable", (operand) => operand instanceof ArrayValue || operand instanceof StringValue],
+        [
+          "lower",
+          (operand) => {
+            const str = operand.value;
+            return operand.type === "StringValue" && str === str.toLowerCase();
+          }
+        ],
+        [
+          "upper",
+          (operand) => {
+            const str = operand.value;
+            return operand.type === "StringValue" && str === str.toUpperCase();
+          }
+        ],
+        ["none", (operand) => operand.type === "NullValue"],
+        ["defined", (operand) => operand.type !== "UndefinedValue"],
+        ["undefined", (operand) => operand.type === "UndefinedValue"],
+        ["equalto", (a, b) => a.value === b.value]
+      ]);
       /**
        * Set the value of a variable in the current environment.
        */
@@ -16908,8 +16856,8 @@ var init_dist = __esm({
       }
     };
     Interpreter = class {
+      global;
       constructor(env3) {
-        __publicField(this, "global");
         this.global = env3 ?? new Environment();
       }
       /**
@@ -17357,11 +17305,11 @@ var init_dist = __esm({
       }
     };
     Template = class {
+      parsed;
       /**
        * @param {string} template The template string
        */
       constructor(template) {
-        __publicField(this, "parsed");
         const tokens = tokenize(template, {
           lstrip_blocks: true,
           trim_blocks: true
@@ -19136,6 +19084,11 @@ var init_tokenizers = __esm({
       // additional_special_tokens (TODO)
     ];
     PreTrainedTokenizer = class extends Callable {
+      return_token_type_ids = false;
+      _default_chat_template = `{% for message in messages %}{{'<|im_start|>' + message['role'] + '
+' + message['content'] + '<|im_end|>' + '
+'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant
+' }}{% endif %}`;
       /**
        * Create a new PreTrainedTokenizer instance.
        * @param {Object} tokenizerJSON The JSON of the tokenizer.
@@ -19143,11 +19096,6 @@ var init_tokenizers = __esm({
        */
       constructor(tokenizerJSON, tokenizerConfig) {
         super();
-        __publicField(this, "return_token_type_ids", false);
-        __publicField(this, "_default_chat_template", `{% for message in messages %}{{'<|im_start|>' + message['role'] + '
-' + message['content'] + '<|im_end|>' + '
-'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant
-' }}{% endif %}`);
         this._tokenizer_config = tokenizerConfig;
         this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);
         this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);
@@ -19603,7 +19551,7 @@ var init_tokenizers = __esm({
             );
           }
         } else {
-          chat_template ?? (chat_template = this.chat_template ?? this.default_chat_template);
+          chat_template ??= this.chat_template ?? this.default_chat_template;
         }
         if (typeof chat_template !== "string") {
           throw Error(`chat_template must be a string, but got ${typeof chat_template}`);
@@ -19640,83 +19588,50 @@ var init_tokenizers = __esm({
       }
     };
     BertTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "return_token_type_ids", true);
-      }
+      return_token_type_ids = true;
     };
     AlbertTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "return_token_type_ids", true);
-      }
+      return_token_type_ids = true;
     };
     MobileBertTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "return_token_type_ids", true);
-      }
+      return_token_type_ids = true;
     };
     SqueezeBertTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "return_token_type_ids", true);
-      }
+      return_token_type_ids = true;
     };
     DebertaTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "return_token_type_ids", true);
-      }
+      return_token_type_ids = true;
     };
     DebertaV2Tokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "return_token_type_ids", true);
-      }
+      return_token_type_ids = true;
     };
     HerbertTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "return_token_type_ids", true);
-      }
+      return_token_type_ids = true;
     };
     ConvBertTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "return_token_type_ids", true);
-      }
+      return_token_type_ids = true;
     };
     RoFormerTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "return_token_type_ids", true);
-      }
+      return_token_type_ids = true;
     };
     DistilBertTokenizer = class extends PreTrainedTokenizer {
     };
     CamembertTokenizer = class extends PreTrainedTokenizer {
     };
     XLMTokenizer = class extends PreTrainedTokenizer {
+      return_token_type_ids = true;
       constructor(tokenizerJSON, tokenizerConfig) {
         super(tokenizerJSON, tokenizerConfig);
-        __publicField(this, "return_token_type_ids", true);
         console.warn('WARNING: `XLMTokenizer` is not yet supported by Hugging Face\'s "fast" tokenizers library. Therefore, you may experience slightly inaccurate results.');
       }
     };
     ElectraTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "return_token_type_ids", true);
-      }
+      return_token_type_ids = true;
     };
     T5Tokenizer = class extends PreTrainedTokenizer {
     };
     GPT2Tokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "_default_chat_template", `{% for message in messages %}" "{{ message.content }}{{ eos_token }}" "{% endfor %}`);
-      }
+      _default_chat_template = `{% for message in messages %}" "{{ message.content }}{{ eos_token }}" "{% endfor %}`;
     };
     BartTokenizer = class extends PreTrainedTokenizer {
     };
@@ -19755,9 +19670,7 @@ var init_tokenizers = __esm({
     };
     SPIECE_UNDERLINE = "\u2581";
     LlamaTokenizer = class extends PreTrainedTokenizer {
-      constructor(tokenizerJSON, tokenizerConfig) {
-        super(tokenizerJSON, tokenizerConfig);
-        __publicField(this, "_default_chat_template", `{% if messages[0]['role'] == 'system' %}{% set loop_messages = messages[1:] %}{% set system_message = messages[0]['content'] %}{% elif USE_DEFAULT_PROMPT == true and not '<<SYS>>' in messages[0]['content'] %}{% set loop_messages = messages %}{% set system_message = 'DEFAULT_SYSTEM_MESSAGE' %}{% else %}{% set loop_messages = messages %}{% set system_message = false %}{% endif %}{% for message in loop_messages %}{% if (message['role'] == 'user') != (loop.index0 % 2 == 0) %}{{ raise_exception('Conversation roles must alternate user/assistant/user/assistant/...') }}{% endif %}{% if loop.index0 == 0 and system_message != false %}{% set content = '<<SYS>>
+      _default_chat_template = `{% if messages[0]['role'] == 'system' %}{% set loop_messages = messages[1:] %}{% set system_message = messages[0]['content'] %}{% elif USE_DEFAULT_PROMPT == true and not '<<SYS>>' in messages[0]['content'] %}{% set loop_messages = messages %}{% set system_message = 'DEFAULT_SYSTEM_MESSAGE' %}{% else %}{% set loop_messages = messages %}{% set system_message = false %}{% endif %}{% for message in loop_messages %}{% if (message['role'] == 'user') != (loop.index0 % 2 == 0) %}{{ raise_exception('Conversation roles must alternate user/assistant/user/assistant/...') }}{% endif %}{% if loop.index0 == 0 and system_message != false %}{% set content = '<<SYS>>
 ' + system_message + '
 <</SYS>>
 
@@ -19765,8 +19678,10 @@ var init_tokenizers = __esm({
 ' + content.strip() + '
 <</SYS>>
 
-' }}{% elif message['role'] == 'assistant' %}{{ ' '  + content.strip() + ' ' + eos_token }}{% endif %}{% endfor %}`);
-        __publicField(this, "DEFAULT_SYSTEM_PROMPT", "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.");
+' }}{% elif message['role'] == 'assistant' %}{{ ' '  + content.strip() + ' ' + eos_token }}{% endif %}{% endfor %}`;
+      DEFAULT_SYSTEM_PROMPT = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.";
+      constructor(tokenizerJSON, tokenizerConfig) {
+        super(tokenizerJSON, tokenizerConfig);
         this.use_default_system_prompt = tokenizerConfig.use_default_system_prompt ?? false;
         this.legacy = tokenizerConfig.legacy ?? true;
         if (!this.legacy) {
@@ -19814,10 +19729,7 @@ var init_tokenizers = __esm({
     Qwen2Tokenizer = class extends PreTrainedTokenizer {
     };
     GemmaTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "_default_chat_template", "{% if messages[0]['role'] == 'system' %}{{ raise_exception('System role not supported') }}{% endif %}{% for message in messages %}{% if (message['role'] == 'user') != (loop.index0 % 2 == 0) %}{{ raise_exception('Conversation roles must alternate user/assistant/user/assistant/...') }}{% endif %}{% if (message['role'] == 'assistant') %}{% set role = 'model' %}{% else %}{% set role = message['role'] %}{% endif %}{{ '<start_of_turn>' + role + '\n' + message['content'] | trim + '<end_of_turn>\n' }}{% endfor %}{% if add_generation_prompt %}{{'<start_of_turn>model\n'}}{% endif %}");
-      }
+      _default_chat_template = "{% if messages[0]['role'] == 'system' %}{{ raise_exception('System role not supported') }}{% endif %}{% for message in messages %}{% if (message['role'] == 'user') != (loop.index0 % 2 == 0) %}{{ raise_exception('Conversation roles must alternate user/assistant/user/assistant/...') }}{% endif %}{% if (message['role'] == 'assistant') %}{% set role = 'model' %}{% else %}{% set role = message['role'] %}{% endif %}{{ '<start_of_turn>' + role + '\n' + message['content'] | trim + '<end_of_turn>\n' }}{% endfor %}{% if add_generation_prompt %}{{'<start_of_turn>model\n'}}{% endif %}";
     };
     Grok1Tokenizer = class extends PreTrainedTokenizer {
     };
@@ -19976,10 +19888,7 @@ var init_tokenizers = __esm({
       ]
     ]);
     WhisperTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "_default_chat_template", `{% for message in messages %}" "{{ message.content }}{{ eos_token }}" "{% endfor %}`);
-      }
+      _default_chat_template = `{% for message in messages %}" "{{ message.content }}{{ eos_token }}" "{% endfor %}`;
       /**
        * Decodes automatic speech recognition (ASR) sequences.
        * @param {Array<{tokens: number[], token_timestamps?: number[], stride: number[]}>} sequences The sequences to decode.
@@ -20538,10 +20447,7 @@ var init_tokenizers = __esm({
     Wav2Vec2CTCTokenizer = class extends PreTrainedTokenizer {
     };
     BlenderbotTokenizer = class extends PreTrainedTokenizer {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "_default_chat_template", `{% for message in messages %}{% if message['role'] == 'user' %}{{ ' ' }}{% endif %}{{ message['content'] }}{% if not loop.last %}{{ '  ' }}{% endif %}{% endfor %}{{ eos_token }}`);
-      }
+      _default_chat_template = `{% for message in messages %}{% if message['role'] == 'user' %}{{ ' ' }}{% endif %}{{ message['content'] }}{% if not loop.last %}{{ '  ' }}{% endif %}{% endfor %}{{ eos_token }}`;
     };
     BlenderbotSmallTokenizer = class extends BlenderbotTokenizer {
     };
@@ -20558,6 +20464,54 @@ var init_tokenizers = __esm({
     CohereTokenizer = class extends PreTrainedTokenizer {
     };
     AutoTokenizer = class {
+      static TOKENIZER_CLASS_MAPPING = {
+        T5Tokenizer,
+        DistilBertTokenizer,
+        CamembertTokenizer,
+        DebertaTokenizer,
+        DebertaV2Tokenizer,
+        BertTokenizer,
+        HerbertTokenizer,
+        ConvBertTokenizer,
+        RoFormerTokenizer,
+        XLMTokenizer,
+        ElectraTokenizer,
+        MobileBertTokenizer,
+        SqueezeBertTokenizer,
+        AlbertTokenizer,
+        GPT2Tokenizer,
+        BartTokenizer,
+        MBartTokenizer,
+        MBart50Tokenizer,
+        RobertaTokenizer,
+        WhisperTokenizer,
+        CodeGenTokenizer,
+        CLIPTokenizer,
+        SiglipTokenizer,
+        MarianTokenizer,
+        BloomTokenizer,
+        NllbTokenizer,
+        M2M100Tokenizer,
+        LlamaTokenizer,
+        CodeLlamaTokenizer,
+        XLMRobertaTokenizer,
+        MPNetTokenizer,
+        FalconTokenizer,
+        GPTNeoXTokenizer,
+        EsmTokenizer,
+        Wav2Vec2CTCTokenizer,
+        BlenderbotTokenizer,
+        BlenderbotSmallTokenizer,
+        SpeechT5Tokenizer,
+        NougatTokenizer,
+        VitsTokenizer,
+        Qwen2Tokenizer,
+        GemmaTokenizer,
+        Grok1Tokenizer,
+        CohereTokenizer,
+        // Base case:
+        PreTrainedTokenizer
+      };
       /**
        * Instantiate one of the tokenizer classes of the library from a pretrained model.
        * 
@@ -20600,54 +20554,6 @@ var init_tokenizers = __esm({
         return new cls(tokenizerJSON, tokenizerConfig);
       }
     };
-    __publicField(AutoTokenizer, "TOKENIZER_CLASS_MAPPING", {
-      T5Tokenizer,
-      DistilBertTokenizer,
-      CamembertTokenizer,
-      DebertaTokenizer,
-      DebertaV2Tokenizer,
-      BertTokenizer,
-      HerbertTokenizer,
-      ConvBertTokenizer,
-      RoFormerTokenizer,
-      XLMTokenizer,
-      ElectraTokenizer,
-      MobileBertTokenizer,
-      SqueezeBertTokenizer,
-      AlbertTokenizer,
-      GPT2Tokenizer,
-      BartTokenizer,
-      MBartTokenizer,
-      MBart50Tokenizer,
-      RobertaTokenizer,
-      WhisperTokenizer,
-      CodeGenTokenizer,
-      CLIPTokenizer,
-      SiglipTokenizer,
-      MarianTokenizer,
-      BloomTokenizer,
-      NllbTokenizer,
-      M2M100Tokenizer,
-      LlamaTokenizer,
-      CodeLlamaTokenizer,
-      XLMRobertaTokenizer,
-      MPNetTokenizer,
-      FalconTokenizer,
-      GPTNeoXTokenizer,
-      EsmTokenizer,
-      Wav2Vec2CTCTokenizer,
-      BlenderbotTokenizer,
-      BlenderbotSmallTokenizer,
-      SpeechT5Tokenizer,
-      NougatTokenizer,
-      VitsTokenizer,
-      Qwen2Tokenizer,
-      GemmaTokenizer,
-      Grok1Tokenizer,
-      CohereTokenizer,
-      // Base case:
-      PreTrainedTokenizer
-    });
   }
 });
 
@@ -21629,6 +21535,7 @@ var init_models = __esm({
     MODEL_NAME_TO_CLASS_MAPPING = /* @__PURE__ */ new Map();
     MODEL_CLASS_TO_NAME_MAPPING = /* @__PURE__ */ new Map();
     PreTrainedModel = class extends Callable {
+      main_input_name = "input_ids";
       /**
        * Creates a new instance of the `PreTrainedModel` class.
        * @param {Object} config The model configuration.
@@ -21636,7 +21543,6 @@ var init_models = __esm({
        */
       constructor(config, session) {
         super();
-        __publicField(this, "main_input_name", "input_ids");
         this.config = config;
         this.session = session;
         const modelName = MODEL_CLASS_TO_NAME_MAPPING.get(this.constructor);
@@ -23070,6 +22976,8 @@ var init_models = __esm({
     WhisperModel = class extends WhisperPreTrainedModel {
     };
     WhisperForConditionalGeneration = class extends WhisperPreTrainedModel {
+      requires_attention_mask = false;
+      main_input_name = "input_features";
       /**
        * Creates a new instance of the `WhisperForConditionalGeneration` class.
        * @param {Object} config Configuration object for the model.
@@ -23079,8 +22987,6 @@ var init_models = __esm({
        */
       constructor(config, session, decoder_merged_session, generation_config) {
         super(config, session);
-        __publicField(this, "requires_attention_mask", false);
-        __publicField(this, "main_input_name", "input_features");
         this.decoder_merged_session = decoder_merged_session;
         this.generation_config = generation_config;
         this.num_decoder_layers = this.config.decoder_layers;
@@ -23108,7 +23014,7 @@ var init_models = __esm({
        */
       async generate(inputs, generation_config = null, logits_processor = null) {
         generation_config = this._get_generation_config(generation_config);
-        generation_config.return_timestamps ?? (generation_config.return_timestamps = false);
+        generation_config.return_timestamps ??= false;
         if (generation_config.return_timestamps) {
           logits_processor = [new WhisperTimeStampLogitsProcessor(generation_config)];
         }
@@ -23209,6 +23115,7 @@ var init_models = __esm({
       }
     };
     VisionEncoderDecoderModel = class extends PreTrainedModel {
+      main_input_name = "pixel_values";
       /**
        * Creates a new instance of the `VisionEncoderDecoderModel` class.
        * @param {Object} config The configuration object specifying the hyperparameters and other model settings.
@@ -23218,7 +23125,6 @@ var init_models = __esm({
        */
       constructor(config, session, decoder_merged_session, generation_config) {
         super(config, session);
-        __publicField(this, "main_input_name", "pixel_values");
         this.decoder_merged_session = decoder_merged_session;
         this.generation_config = generation_config;
         const encoderConfig = this.config.encoder;
@@ -23256,14 +23162,14 @@ var init_models = __esm({
     CLIPTextModelWithProjection = class extends CLIPPreTrainedModel {
       /** @type {PreTrainedModel.from_pretrained} */
       static async from_pretrained(pretrained_model_name_or_path, options = {}) {
-        options.model_file_name ?? (options.model_file_name = "text_model");
+        options.model_file_name ??= "text_model";
         return super.from_pretrained(pretrained_model_name_or_path, options);
       }
     };
     CLIPVisionModelWithProjection = class extends CLIPPreTrainedModel {
       /** @type {PreTrainedModel.from_pretrained} */
       static async from_pretrained(pretrained_model_name_or_path, options = {}) {
-        options.model_file_name ?? (options.model_file_name = "vision_model");
+        options.model_file_name ??= "vision_model";
         return super.from_pretrained(pretrained_model_name_or_path, options);
       }
     };
@@ -23274,14 +23180,14 @@ var init_models = __esm({
     SiglipTextModel = class extends SiglipPreTrainedModel {
       /** @type {PreTrainedModel.from_pretrained} */
       static async from_pretrained(pretrained_model_name_or_path, options = {}) {
-        options.model_file_name ?? (options.model_file_name = "text_model");
+        options.model_file_name ??= "text_model";
         return super.from_pretrained(pretrained_model_name_or_path, options);
       }
     };
     SiglipVisionModel = class extends CLIPPreTrainedModel {
       /** @type {PreTrainedModel.from_pretrained} */
       static async from_pretrained(pretrained_model_name_or_path, options = {}) {
-        options.model_file_name ?? (options.model_file_name = "vision_model");
+        options.model_file_name ??= "vision_model";
         return super.from_pretrained(pretrained_model_name_or_path, options);
       }
     };
@@ -24220,10 +24126,7 @@ var init_models = __esm({
       }
     };
     SpeechT5HifiGan = class extends PreTrainedModel {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "main_input_name", "spectrogram");
-      }
+      main_input_name = "spectrogram";
     };
     TrOCRPreTrainedModel = class extends PreTrainedModel {
       /**
@@ -24310,14 +24213,14 @@ var init_models = __esm({
     ClapTextModelWithProjection = class extends ClapPreTrainedModel {
       /** @type {PreTrainedModel.from_pretrained} */
       static async from_pretrained(pretrained_model_name_or_path, options = {}) {
-        options.model_file_name ?? (options.model_file_name = "text_model");
+        options.model_file_name ??= "text_model";
         return super.from_pretrained(pretrained_model_name_or_path, options);
       }
     };
     ClapAudioModelWithProjection = class extends ClapPreTrainedModel {
       /** @type {PreTrainedModel.from_pretrained} */
       static async from_pretrained(pretrained_model_name_or_path, options = {}) {
-        options.model_file_name ?? (options.model_file_name = "audio_model");
+        options.model_file_name ??= "audio_model";
         return super.from_pretrained(pretrained_model_name_or_path, options);
       }
     };
@@ -24370,6 +24273,16 @@ var init_models = __esm({
       }
     };
     PretrainedMixin = class {
+      /**
+       * Mapping from model type to model class.
+       * @type {Map<string, Object>[]}
+       */
+      static MODEL_CLASS_MAPPINGS = null;
+      /**
+       * Whether to attempt to instantiate the base class (`PretrainedModel`) if 
+       * the model type is not found in the mapping.
+       */
+      static BASE_IF_FAIL = false;
       /** @type {PreTrainedModel.from_pretrained} */
       static async from_pretrained(pretrained_model_name_or_path, {
         quantized = true,
@@ -24411,16 +24324,6 @@ var init_models = __esm({
         }
       }
     };
-    /**
-     * Mapping from model type to model class.
-     * @type {Map<string, Object>[]}
-     */
-    __publicField(PretrainedMixin, "MODEL_CLASS_MAPPINGS", null);
-    /**
-     * Whether to attempt to instantiate the base class (`PretrainedModel`) if 
-     * the model type is not found in the mapping.
-     */
-    __publicField(PretrainedMixin, "BASE_IF_FAIL", false);
     MODEL_MAPPING_NAMES_ENCODER_ONLY = /* @__PURE__ */ new Map([
       ["bert", ["BertModel", BertModel]],
       ["nomic_bert", ["NomicBertModel", NomicBertModel]],
@@ -24744,74 +24647,74 @@ var init_models = __esm({
       MODEL_NAME_TO_CLASS_MAPPING.set(name2, model);
     }
     AutoModel = class extends PretrainedMixin {
+      /** @type {Map<string, Object>[]} */
+      // @ts-ignore
+      static MODEL_CLASS_MAPPINGS = MODEL_CLASS_TYPE_MAPPING.map((x) => x[0]);
+      static BASE_IF_FAIL = true;
     };
-    /** @type {Map<string, Object>[]} */
-    // @ts-ignore
-    __publicField(AutoModel, "MODEL_CLASS_MAPPINGS", MODEL_CLASS_TYPE_MAPPING.map((x) => x[0]));
-    __publicField(AutoModel, "BASE_IF_FAIL", true);
     AutoModelForSequenceClassification = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING_NAMES];
     };
-    __publicField(AutoModelForSequenceClassification, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING_NAMES]);
     AutoModelForTokenClassification = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_TOKEN_CLASSIFICATION_MAPPING_NAMES];
     };
-    __publicField(AutoModelForTokenClassification, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_TOKEN_CLASSIFICATION_MAPPING_NAMES]);
     AutoModelForSeq2SeqLM = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING_NAMES];
     };
-    __publicField(AutoModelForSeq2SeqLM, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING_NAMES]);
     AutoModelForSpeechSeq2Seq = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_SPEECH_SEQ_2_SEQ_MAPPING_NAMES];
     };
-    __publicField(AutoModelForSpeechSeq2Seq, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_SPEECH_SEQ_2_SEQ_MAPPING_NAMES]);
     AutoModelForTextToSpectrogram = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_TEXT_TO_SPECTROGRAM_MAPPING_NAMES];
     };
-    __publicField(AutoModelForTextToSpectrogram, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_TEXT_TO_SPECTROGRAM_MAPPING_NAMES]);
     AutoModelForTextToWaveform = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_TEXT_TO_WAVEFORM_MAPPING_NAMES];
     };
-    __publicField(AutoModelForTextToWaveform, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_TEXT_TO_WAVEFORM_MAPPING_NAMES]);
     AutoModelForCausalLM = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_WITH_LM_HEAD_MAPPING_NAMES];
     };
-    __publicField(AutoModelForCausalLM, "MODEL_CLASS_MAPPINGS", [MODEL_WITH_LM_HEAD_MAPPING_NAMES]);
     AutoModelForMaskedLM = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_MASKED_LM_MAPPING_NAMES];
     };
-    __publicField(AutoModelForMaskedLM, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_MASKED_LM_MAPPING_NAMES]);
     AutoModelForQuestionAnswering = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_QUESTION_ANSWERING_MAPPING_NAMES];
     };
-    __publicField(AutoModelForQuestionAnswering, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_QUESTION_ANSWERING_MAPPING_NAMES]);
     AutoModelForVision2Seq = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_VISION_2_SEQ_MAPPING_NAMES];
     };
-    __publicField(AutoModelForVision2Seq, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_VISION_2_SEQ_MAPPING_NAMES]);
     AutoModelForImageClassification = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_IMAGE_CLASSIFICATION_MAPPING_NAMES];
     };
-    __publicField(AutoModelForImageClassification, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_IMAGE_CLASSIFICATION_MAPPING_NAMES]);
     AutoModelForImageSegmentation = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_IMAGE_SEGMENTATION_MAPPING_NAMES];
     };
-    __publicField(AutoModelForImageSegmentation, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_IMAGE_SEGMENTATION_MAPPING_NAMES]);
     AutoModelForSemanticSegmentation = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_SEMANTIC_SEGMENTATION_MAPPING_NAMES];
     };
-    __publicField(AutoModelForSemanticSegmentation, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_SEMANTIC_SEGMENTATION_MAPPING_NAMES]);
     AutoModelForObjectDetection = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_OBJECT_DETECTION_MAPPING_NAMES];
     };
-    __publicField(AutoModelForObjectDetection, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_OBJECT_DETECTION_MAPPING_NAMES]);
     AutoModelForZeroShotObjectDetection = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_ZERO_SHOT_OBJECT_DETECTION_MAPPING_NAMES];
     };
-    __publicField(AutoModelForZeroShotObjectDetection, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_ZERO_SHOT_OBJECT_DETECTION_MAPPING_NAMES]);
     AutoModelForCTC = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_CTC_MAPPING_NAMES];
     };
-    __publicField(AutoModelForCTC, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_CTC_MAPPING_NAMES]);
     AutoModelForAudioClassification = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_AUDIO_CLASSIFICATION_MAPPING_NAMES];
     };
-    __publicField(AutoModelForAudioClassification, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_AUDIO_CLASSIFICATION_MAPPING_NAMES]);
     AutoModelForDocumentQuestionAnswering = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_DOCUMENT_QUESTION_ANSWERING_MAPPING_NAMES];
     };
-    __publicField(AutoModelForDocumentQuestionAnswering, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_DOCUMENT_QUESTION_ANSWERING_MAPPING_NAMES]);
     AutoModelForImageToImage = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_IMAGE_TO_IMAGE_MAPPING_NAMES];
     };
-    __publicField(AutoModelForImageToImage, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_IMAGE_TO_IMAGE_MAPPING_NAMES]);
     AutoModelForDepthEstimation = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_DEPTH_ESTIMATION_MAPPING_NAMES];
     };
-    __publicField(AutoModelForDepthEstimation, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_DEPTH_ESTIMATION_MAPPING_NAMES]);
     AutoModelForImageFeatureExtraction = class extends PretrainedMixin {
+      static MODEL_CLASS_MAPPINGS = [MODEL_FOR_IMAGE_FEATURE_EXTRACTION_MAPPING_NAMES];
     };
-    __publicField(AutoModelForImageFeatureExtraction, "MODEL_CLASS_MAPPINGS", [MODEL_FOR_IMAGE_FEATURE_EXTRACTION_MAPPING_NAMES]);
     Seq2SeqLMOutput = class extends ModelOutput {
       /**
        * @param {Object} output The output of the model.
@@ -26857,9 +26760,8 @@ var init_processors = __esm({
     };
     WhisperFeatureExtractor = class extends FeatureExtractor {
       constructor(config) {
-        var _a;
         super(config);
-        (_a = this.config).mel_filters ?? (_a.mel_filters = mel_filter_bank(
+        this.config.mel_filters ??= mel_filter_bank(
           Math.floor(1 + this.config.n_fft / 2),
           // num_frequency_bins
           this.config.feature_size,
@@ -26874,7 +26776,7 @@ var init_processors = __esm({
           // norm
           "slaney"
           // mel_scale
-        ));
+        );
         this.window = window_function(this.config.n_fft, "hann");
       }
       /**
@@ -27437,6 +27339,48 @@ var init_processors = __esm({
     OwlViTProcessor = class extends Processor {
     };
     AutoProcessor = class {
+      static FEATURE_EXTRACTOR_CLASS_MAPPING = {
+        ImageFeatureExtractor,
+        WhisperFeatureExtractor,
+        ViTFeatureExtractor,
+        MobileViTFeatureExtractor,
+        MobileViTImageProcessor,
+        OwlViTFeatureExtractor,
+        Owlv2ImageProcessor,
+        CLIPFeatureExtractor,
+        ChineseCLIPFeatureExtractor,
+        SiglipImageProcessor,
+        ConvNextFeatureExtractor,
+        ConvNextImageProcessor,
+        SegformerFeatureExtractor,
+        BitImageProcessor,
+        DPTImageProcessor,
+        DPTFeatureExtractor,
+        GLPNFeatureExtractor,
+        BeitFeatureExtractor,
+        DeiTFeatureExtractor,
+        DetrFeatureExtractor,
+        YolosFeatureExtractor,
+        DonutFeatureExtractor,
+        NougatImageProcessor,
+        EfficientNetImageProcessor,
+        ViTImageProcessor,
+        VitMatteImageProcessor,
+        SamImageProcessor,
+        Swin2SRImageProcessor,
+        Wav2Vec2FeatureExtractor,
+        SeamlessM4TFeatureExtractor,
+        SpeechT5FeatureExtractor,
+        ASTFeatureExtractor,
+        ClapFeatureExtractor
+      };
+      static PROCESSOR_CLASS_MAPPING = {
+        WhisperProcessor,
+        Wav2Vec2ProcessorWithLM,
+        SamProcessor,
+        SpeechT5Processor,
+        OwlViTProcessor
+      };
       /**
        * Instantiate one of the processor classes of the library from a pretrained model.
        * 
@@ -27481,48 +27425,6 @@ var init_processors = __esm({
         return new processor_class(feature_extractor);
       }
     };
-    __publicField(AutoProcessor, "FEATURE_EXTRACTOR_CLASS_MAPPING", {
-      ImageFeatureExtractor,
-      WhisperFeatureExtractor,
-      ViTFeatureExtractor,
-      MobileViTFeatureExtractor,
-      MobileViTImageProcessor,
-      OwlViTFeatureExtractor,
-      Owlv2ImageProcessor,
-      CLIPFeatureExtractor,
-      ChineseCLIPFeatureExtractor,
-      SiglipImageProcessor,
-      ConvNextFeatureExtractor,
-      ConvNextImageProcessor,
-      SegformerFeatureExtractor,
-      BitImageProcessor,
-      DPTImageProcessor,
-      DPTFeatureExtractor,
-      GLPNFeatureExtractor,
-      BeitFeatureExtractor,
-      DeiTFeatureExtractor,
-      DetrFeatureExtractor,
-      YolosFeatureExtractor,
-      DonutFeatureExtractor,
-      NougatImageProcessor,
-      EfficientNetImageProcessor,
-      ViTImageProcessor,
-      VitMatteImageProcessor,
-      SamImageProcessor,
-      Swin2SRImageProcessor,
-      Wav2Vec2FeatureExtractor,
-      SeamlessM4TFeatureExtractor,
-      SpeechT5FeatureExtractor,
-      ASTFeatureExtractor,
-      ClapFeatureExtractor
-    });
-    __publicField(AutoProcessor, "PROCESSOR_CLASS_MAPPING", {
-      WhisperProcessor,
-      Wav2Vec2ProcessorWithLM,
-      SamProcessor,
-      SpeechT5Processor,
-      OwlViTProcessor
-    });
   }
 });
 
@@ -27846,14 +27748,14 @@ var init_pipelines = __esm({
     };
     Text2TextGenerationPipeline = class extends /** @type {new (options: TextPipelineConstructorArgs) => Text2TextGenerationPipelineType} */
     Pipeline {
+      /** @type {'generated_text'} */
+      _key = "generated_text";
       /**
        * Create a new Text2TextGenerationPipeline.
        * @param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.
        */
       constructor(options) {
         super(options);
-        /** @type {'generated_text'} */
-        __publicField(this, "_key", "generated_text");
       }
       /** @type {Text2TextGenerationPipelineCallback} */
       async _call(texts, generate_kwargs = {}) {
@@ -27889,27 +27791,27 @@ var init_pipelines = __esm({
     SummarizationPipeline = class extends /** @type {new (options: TextPipelineConstructorArgs) => SummarizationPipelineType} */
     /** @type {any} */
     Text2TextGenerationPipeline {
+      /** @type {'summary_text'} */
+      _key = "summary_text";
       /**
        * Create a new SummarizationPipeline.
        * @param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.
        */
       constructor(options) {
         super(options);
-        /** @type {'summary_text'} */
-        __publicField(this, "_key", "summary_text");
       }
     };
     TranslationPipeline = class extends /** @type {new (options: TextPipelineConstructorArgs) => TranslationPipelineType} */
     /** @type {any} */
     Text2TextGenerationPipeline {
+      /** @type {'translation_text'} */
+      _key = "translation_text";
       /**
        * Create a new TranslationPipeline.
        * @param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.
        */
       constructor(options) {
         super(options);
-        /** @type {'translation_text'} */
-        __publicField(this, "_key", "translation_text");
       }
     };
     TextGenerationPipeline = class extends /** @type {new (options: TextPipelineConstructorArgs) => TextGenerationPipelineType} */
@@ -28693,13 +28595,13 @@ var init_pipelines = __esm({
     };
     TextToAudioPipeline = class extends /** @type {new (options: TextToAudioPipelineConstructorArgs) => TextToAudioPipelineType} */
     Pipeline {
+      DEFAULT_VOCODER_ID = "Xenova/speecht5_hifigan";
       /**
        * Create a new TextToAudioPipeline.
        * @param {TextToAudioPipelineConstructorArgs} options An object used to instantiate the pipeline.
        */
       constructor(options) {
         super(options);
-        __publicField(this, "DEFAULT_VOCODER_ID", "Xenova/speecht5_hifigan");
         this.vocoder = options.vocoder ?? null;
       }
       /** @type {TextToAudioPipelineCallback} */
@@ -29120,53 +29022,61 @@ var require_background = __commonJS({
     init_transformers();
     try {
       env.allowLocalModels = false;
-      env.backends = env.backends || {};
-      env.backends.onnx = env.backends.onnx || {};
-      env.backends.onnx.wasm = env.backends.onnx.wasm || {};
+      env.useBrowserCache = true;
       env.backends.onnx.wasm.numThreads = 1;
       env.backends.onnx.wasm.proxy = false;
-      env.backends.onnx.wasm.wasmPaths = chrome.runtime.getURL("/");
-      console.log("[Background AI] env configured:", env.backends.onnx.wasm);
     } catch (err) {
-      console.warn("[Background AI] env config failed", err);
+      console.warn("[Background] env config failed", err);
     }
     var classifier = null;
-    var loading = true;
-    var loadError = null;
     async function initClassifier() {
+      if (classifier) return;
       try {
-        console.log("[Background AI] Loading model...");
+        console.log("[Background] Loading Zero Tolerance Model...");
         classifier = await pipeline("zero-shot-classification", "Xenova/mobilebert-uncased-mnli");
-        loading = false;
-        console.log("[Background AI] Model loaded and ready");
+        console.log("[Background] Model Ready");
       } catch (err) {
-        loadError = err;
-        loading = false;
-        console.error("[Background AI] Failed to load model", err);
+        console.error("[Background] Load Error", err);
       }
     }
     initClassifier();
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (!message || message.type !== "classify") return;
-      const { title, goal } = message || {};
-      if (loading) {
-        sendResponse({ shouldShow: true, loading: true });
-        return true;
-      }
-      if (loadError || !classifier) {
-        sendResponse({ shouldShow: true, loading: false, error: String(loadError || "no-model") });
+      if (!classifier) {
+        sendResponse({ shouldShow: true });
         return true;
       }
       (async () => {
         try {
-          const candidate_labels = [goal || "Relevant", "Distraction"];
-          const result = await classifier(title, { candidate_labels });
-          const topLabel = result?.labels && result.labels[0];
-          const shouldShow = typeof topLabel === "string" && topLabel.toLowerCase() === (goal || "").toLowerCase();
-          sendResponse({ shouldShow, labels: result.labels, scores: result.scores, loading: false });
+          const labels = [
+            message.goal,
+            // Your Goal (e.g. "Learn Python")
+            "gaming",
+            // Distraction
+            "anime",
+            // Distraction
+            "music video",
+            // Distraction
+            "entertainment",
+            // Distraction
+            "vlog",
+            // Distraction
+            "comedy",
+            // Distraction
+            "movie"
+            // Distraction
+          ];
+          const result = await classifier(message.title, labels, { multi_label: false });
+          const bestMatch = result.labels[0];
+          const confidence = result.scores[0];
+          console.log(`[AI] "${message.title}" -> ${bestMatch} (${(confidence * 100).toFixed(0)}%)`);
+          if (bestMatch === message.goal) {
+            sendResponse({ shouldShow: true });
+          } else {
+            sendResponse({ shouldShow: false });
+          }
         } catch (err) {
-          console.error("[Background AI] Classification error", err);
-          sendResponse({ shouldShow: true, loading: false, error: String(err) });
+          sendResponse({ shouldShow: true });
         }
       })();
       return true;

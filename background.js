@@ -1,38 +1,24 @@
 import { pipeline, env } from '@xenova/transformers';
 
-// === Environment configuration for Chrome extension service worker ===
 try {
   env.allowLocalModels = false;
-  env.backends = env.backends || {};
-  env.backends.onnx = env.backends.onnx || {};
-  env.backends.onnx.wasm = env.backends.onnx.wasm || {};
-
-  // Disable multithreading and proxy to avoid Blob/worker usage
+  env.useBrowserCache = true;
   env.backends.onnx.wasm.numThreads = 1;
   env.backends.onnx.wasm.proxy = false;
-
-  // Make WASM loader use local extension files
-  env.backends.onnx.wasm.wasmPaths = chrome.runtime.getURL('/');
-
-  console.log('[Background AI] env configured:', env.backends.onnx.wasm);
 } catch (err) {
-  console.warn('[Background AI] env config failed', err);
+  console.warn('[Background] env config failed', err);
 }
 
 let classifier = null;
-let loading = true;
-let loadError = null;
 
 async function initClassifier() {
+  if (classifier) return;
   try {
-    console.log('[Background AI] Loading model...');
+    console.log('[Background] Loading Zero Tolerance Model...');
     classifier = await pipeline('zero-shot-classification', 'Xenova/mobilebert-uncased-mnli');
-    loading = false;
-    console.log('[Background AI] Model loaded and ready');
+    console.log('[Background] Model Ready');
   } catch (err) {
-    loadError = err;
-    loading = false;
-    console.error('[Background AI] Failed to load model', err);
+    console.error('[Background] Load Error', err);
   }
 }
 
@@ -40,36 +26,50 @@ initClassifier();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (!message || message.type !== 'classify') return;
-  const { title, goal } = message || {};
 
-  // If model is still loading -> fail-safe: show video and inform loader state
-  if (loading) {
-    sendResponse({ shouldShow: true, loading: true });
-    return true;
-  }
-
-  // If model failed -> fail-safe: show video
-  if (loadError || !classifier) {
-    sendResponse({ shouldShow: true, loading: false, error: String(loadError || 'no-model') });
+  if (!classifier) {
+    sendResponse({ shouldShow: true });
     return true;
   }
 
   (async () => {
     try {
-      const candidate_labels = [goal || 'Relevant', 'Distraction'];
-      const result = await classifier(title, { candidate_labels });
+      // 1. The Categories
+      const labels = [
+        message.goal,       // Your Goal (e.g. "Learn Python")
+  "gaming",           // Distraction
+  "anime",            // Distraction
+  "music video",      // Distraction
+  "entertainment",    // Distraction
+  "vlog",             // Distraction
+  "comedy",           // Distraction
+  "movie"             // Distraction
+      ];
 
-      // Top label is the most likely prediction
-      const topLabel = result?.labels && result.labels[0];
-      const shouldShow = typeof topLabel === 'string' && (topLabel.toLowerCase() === (goal || '').toLowerCase());
+      // 2. Ask the AI
+      const result = await classifier(message.title, labels, { multi_label: false });
+      const bestMatch = result.labels[0];
+      const confidence = result.scores[0];
 
-      sendResponse({ shouldShow, labels: result.labels, scores: result.scores, loading: false });
+      console.log(`[AI] "${message.title}" -> ${bestMatch} (${(confidence * 100).toFixed(0)}%)`);
+
+      // === ZERO TOLERANCE LOGIC ===
+
+      // If the best match is YOUR GOAL, show it.
+      if (bestMatch === message.goal) {
+        sendResponse({ shouldShow: true });
+      }
+      // If the best match is ANY distraction (Gaming, Anime, etc.), BLOCK IT.
+      // We don't care about confidence anymore. If AI says "Gaming", it's gone.
+      else {
+        sendResponse({ shouldShow: false });
+      }
+
     } catch (err) {
-      console.error('[Background AI] Classification error', err);
-      // On error, prefer showing the video (fail-safe)
-      sendResponse({ shouldShow: true, loading: false, error: String(err) });
+      // On error, default to showing (fail safe)
+      sendResponse({ shouldShow: true });
     }
   })();
 
-  return true; // keep channel open for async response
+  return true;
 });

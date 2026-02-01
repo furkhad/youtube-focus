@@ -4,6 +4,8 @@
   "description": "A browser extension to help stay focused on YouTube.",
   "main": "background.js",
   "scripts": {
+    "build": "esbuild background.js --bundle --outfile=background.bundle.js --format=esm",
+    "watch": "esbuild background.js --bundle --outfile=background.bundle.js --format=esm --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
