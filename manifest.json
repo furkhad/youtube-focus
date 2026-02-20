@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Ahmed's YouTube Focus",
-  "version": "2.4",
-  "description": "Local, fast YouTube feed filter with Shorts blocking",
+  "name": "YouTube Focus ML",
+  "version": "1.0.0",
+  "description": "Local-first YouTube feed filtering powered by on-device ML classification.",
   "background": {
     "service_worker": "background.bundle.js",
     "type": "module"
   },
-  "permissions": ["activeTab", "scripting", "storage"],
+  "permissions": ["storage"],
   "action": {
     "default_popup": "popup.html"
   },
